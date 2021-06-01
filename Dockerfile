@@ -1,0 +1,26 @@
+FROM ubuntu:20.04
+
+LABEL authors="Rafael Sene - rpsene@br.ibm.com"
+LABEL year="2021"
+
+RUN apt-get update; apt-get -y install pwgen python3 python3-pip libpq-dev \
+python-dev build-essential; pip3 install psycopg2; pip3 install pytz
+
+ENV TABLE=""
+ENV CLUSTER_ID=""
+ENV POWERVS_GUID=""
+ENV POWERVS_REGION=""
+ENV POWERVS_ZONE=""
+ENV OPENSHIFT_VERSION=""
+ENV OPENSHIFT_CLUSTER_FLAVOR=""
+ENV REQUESTOR_EMAIL=""
+ENV REQUESTOR_ID=""
+ENV JENKINS_URL_ARTIFACT=""
+ENV AVAILABLE=""
+ENV ALLOCATED=""
+
+WORKDIR /python
+
+COPY ./insert.py .
+
+ENTRYPOINT ["/usr/bin/python3", "./insert.py"]
