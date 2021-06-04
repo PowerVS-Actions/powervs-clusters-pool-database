@@ -24,10 +24,10 @@ def config(filename='database.ini', section='postgresql'):
     return db
     
 
-def insert_data(table,date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated):
+def insert_data(table,date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated,deleted):
 
-    sql = "INSERT INTO " + table + " (date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated) \
-    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING cluster_id;"
+    sql = "INSERT INTO " + table + " (date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated,deleted) \
+    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING cluster_id;"
     conn = None
     powervs_id = None
     try:
@@ -38,7 +38,7 @@ def insert_data(table,date,time_utc,cluster_id,powervs_guid,powervs_region,power
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
-        cur.execute(sql, (date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated,))
+        cur.execute(sql, (date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated,deleted,))
         # get the powervs_id back
         powervs_id = cur.fetchone()[0]
         # commit the changes to the database
@@ -54,17 +54,17 @@ def insert_data(table,date,time_utc,cluster_id,powervs_guid,powervs_region,power
 
 if __name__ == '__main__':
     print (len(sys.argv))
-    if len(sys.argv) != 13:
+    if len(sys.argv) != 14:
         sys.exit('''
-    ERROR: The nuber of arguments is not correct.
-           We expect: table,date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated
+           ERROR: The number of arguments is not correct.
+           We expect: table,date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id,jenkins_url_artifact,available,allocated,deleted
         ''')
     else:
         print ('Argument List:', str(sys.argv))
         
-        #table,date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id, jenkins_url_artifact,available,allocated
+        #table,date,time_utc,cluster_id,powervs_guid,powervs_region,powervs_zone,ocp_version,ocp_size,requestor_email,requestor_id, jenkins_url_artifact,available,allocated,deleted
         today = datetime.today().strftime('%m/%d/%Y')
         time = str(datetime.utcnow()).split(" ")[1]
 
-        insert_data(str(sys.argv[1]),str(today),str(time),str(sys.argv[2]),str(sys.argv[3]),str(sys.argv[4]),str(sys.argv[5]),str(sys.argv[6]),str(sys.argv[7]),str(sys.argv[8]),str(sys.argv[9]),str(sys.argv[10]),str(sys.argv[11]),str(sys.argv[12]))
+        insert_data(str(sys.argv[1]),str(today),str(time),str(sys.argv[2]),str(sys.argv[3]),str(sys.argv[4]),str(sys.argv[5]),str(sys.argv[6]),str(sys.argv[7]),str(sys.argv[8]),str(sys.argv[9]),str(sys.argv[10]),str(sys.argv[11]),str(sys.argv[12]),str(sys.argv[13]))
 
